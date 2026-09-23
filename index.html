@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10,000 XP End Boss Dragon</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: #05060a; overflow: hidden; }
+  body { display: grid; place-items: center; }
+  #screen {
+    margin: 0;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: min(1.45vw, 4.2vh);
+    line-height: 1.05;
+    letter-spacing: 0.04em;
+    white-space: pre;
+    color: #2a2f38;
+    user-select: none;
+    will-change: transform;
+  }
+  .b { color: #3fbf6f; text-shadow: 0 0 6px rgba(60, 200, 110, .35); }
+  .h { color: #e9dfc0; }
+  .e { color: #ffe23a; text-shadow: 0 0 10px rgba(255, 220, 60, .95), 0 0 20px rgba(255, 120, 0, .6); }
+  .y { color: #ffe95a; text-shadow: 0 0 8px rgba(255, 230, 80, .8); }
+  .o { color: #ff8c1e; text-shadow: 0 0 8px rgba(255, 140, 30, .7); }
+  .r { color: #e6321e; text-shadow: 0 0 8px rgba(230, 50, 30, .7); }
+  .m { color: #8a5a3a; }
+  .t { color: #ffe23a; text-shadow: 0 0 8px rgba(255, 220, 60, .7); }
+  .f { color: #ff3b2f; text-shadow: 0 0 10px rgba(255, 60, 40, .9); }
+  .w { color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, .8); }
+</style>
+</head>
+<body>
+<pre id="screen" aria-label="animated ascii end boss dragon"></pre>
+<script>
+(() => {
+  'use strict';
+  const W = 100, H = 24, CYCLE = 6;
+  const HUD = 'CRITICAL HIT! +10,000 XP';
+  const R = String.raw;
+  const WINGS = [
+    R`        /\                                                          /\        `,
+    R`       /  \   __                                                __   /  \       `,
+    R`      /    \ /  \__                                          __/  \ /    \      `,
+    R`     / /\   \    \__                                      __/    /   /\ \     `,
+    R`    / /  \   \_     \___                              ___/     _/   /  \ \    `,
+    R`   / /    \_   \__      \__                        __/      __/   _/    \ \   `,
+    R`  /_/       \_    \__      \_                    _/      __/    _/       \_\  `,
+    R`              \_     \_      \_                _/      _/     _/              `,
+  ];
+  const HEAD = [
+    R`                            \_/                _/                     `,
+    R`                              \      _____    /                       `,
+    R`                       ________\____/     \__/________                `,
+    R`                     _/                               \__             `,
+    R`                    /     __        _____        __      \_           `,
+    R`                   |     /  \      /     \      /  \       \          `,
+    R`                   |    /    \    /       \    /    \       \_        `,
+    R`                   |   /      \__/         \__/      \        \______ `,
+    R`                    \_/                                \______       >`,
+  ];
+  const JAW = [
+    R`                     \  V   V   V   V   V   V   V   V   V   V   V  /  `,
+    R`                      \___________________________________________/   `,
+    R`                          \____     _____     _____     ____/        `,
+  ];
+  const WING_LEFT = 10, HEAD_TOP = 8, HEAD_LEFT = 10, JAW_TOP = 17;
+  const MOUTH = {x: HEAD_LEFT + 70, y: HEAD_TOP + 8};
+  const EYES = [[HEAD_LEFT + 30, HEAD_TOP + 6], [HEAD_LEFT + 44, HEAD_TOP + 6]];
+
+  const hash = (x, y, k) => { const n = Math.sin(x * 12.9898 + y * 78.233 + k * 37.719) * 43758.5453; return n - Math.floor(n); };
+  const lay = (grid, cls, rows, top, left) => rows.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      const gy = top + y, gx = left + x;
+      if (row[x] !== ' ' && gy >= 0 && gy < H && gx >= 0 && gx < W) { grid[gy][gx] = row[x]; cls[gy][gx] = 'b'; }
+    }
+  });
+
+  /** One frame at time t: wings on a sine, a roar that opens the jaw, fire that
+   *  grows from the mouth with flicker every frame, embers that rise. */
+  function render(t) {
+    const phase = (t % CYCLE) / CYCLE;
+    const roar = phase > 0.3 && phase < 0.42, breath = phase >= 0.42 ? Math.min(1, (phase - 0.42) / 0.25) : 0;
+    const dying = phase > 0.42 ? (phase - 0.42) / 0.58 : 0;
+    const grid = Array.from({length: H}, () => Array(W).fill(' '));
+    const cls = Array.from({length: H}, () => Array(W).fill(''));
+    const beat = Math.round(1.5 + 1.5 * Math.sin(t * 5.5));
+    lay(grid, cls, WINGS, beat, WING_LEFT);
+    lay(grid, cls, HEAD, HEAD_TOP, HEAD_LEFT);
+    const jaw = roar || breath ? 2 : 0;
+    lay(grid, cls, JAW, JAW_TOP + jaw, HEAD_LEFT);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if ('V>'.includes(grid[y][x])) cls[y][x] = 'h';
+    const pulse = 0.5 + 0.5 * Math.sin(t * 6);
+    for (const [x, y] of EYES) { grid[y][x] = pulse > 0.66 ? '@' : pulse > 0.33 ? 'O' : 'o'; cls[y][x] = 'e'; }
+    // Fire: a widening stream, a fresh flicker every frame, a hot core.
+    const k = Math.floor(t * 18);
+    if (breath > 0) {
+      const reach = Math.round(breath * (W - MOUTH.x));
+      for (let x = MOUTH.x; x < MOUTH.x + reach && x < W; x++) {
+        const h = Math.min(5, 1 + Math.floor((x - MOUTH.x) / 5));
+        for (let dy = -h; dy <= h; dy++) {
+          const y = MOUTH.y + jaw / 2 + dy;
+          if (y < 0 || y >= H || grid[y][x] !== ' ' || hash(x, dy, k) < 0.2) continue;
+          const heat = 1 - Math.abs(dy) / (h + 1) - (x - MOUTH.x) / (W - MOUTH.x) * 0.5;
+          grid[y][x] = "^*~'.:"[Math.floor(hash(dy, x, k) * 6)];
+          cls[y][x] = heat > 0.6 ? 'y' : heat > 0.3 ? 'o' : 'r';
+        }
+      }
+    }
+    // Embers: rising sparks above the fire and the head, brighter during the breath.
+    for (let n = 0; n < 40; n++) {
+      const life = (t * 0.6 + n * 0.37) % 1;
+      const x = Math.round(MOUTH.x - 10 + hash(n, 1, 0) * 50 + Math.sin(t * 2 + n) * 3);
+      const y = Math.round(MOUTH.y - life * 14 + hash(n, 2, 0) * 4);
+      if (y >= 0 && y < H && x >= 0 && x < W && grid[y][x] === ' ' && (breath > 0 || hash(n, 3, 0) < 0.3)) {
+        grid[y][x] = life < 0.5 ? '*' : '.'; cls[y][x] = life < 0.5 ? 'o' : 'm';
+      }
+    }
+    // HUD: the hit, the bar draining through the breath, flashing while it takes damage.
+    const cells = 30, filled = Math.max(1, Math.round(cells * (1 - dying)));
+    const flash = dying > 0 && Math.floor(t * 8) % 2 === 0;
+    const bar = '#'.repeat(filled) + (flash ? '-' : ' ').repeat(cells - filled);
+    const hud = ` <span class="t">${HUD}</span>   <span class="h">BOSS</span> [<span class="${flash ? 'w' : 'f'}">${bar}</span>]  ${Math.round(filled / cells * 100)}%`;
+    const rows = grid.map((row, y) => {
+      let html = '', run = '', cur = '';
+      const flush = () => { if (run) html += cur ? `<span class="${cur}">${run}</span>` : run; run = ''; };
+      for (let x = 0; x < W; x++) {
+        const c = cls[y][x];
+        if (c !== cur) { flush(); cur = c; }
+        run += row[x] === '&' ? '&amp;' : row[x] === '<' ? '&lt;' : row[x];
+      }
+      flush();
+      return html;
+    });
+    rows.push('', hud);
+    return {html: rows.join('\n'), shake: roar || (breath > 0 && breath < 1)};
+  }
+
+  const screen = document.getElementById('screen');
+  const start = performance.now();
+  let raf = 0;
+  const frame = now => {
+    const t = (now - start) / 1000;
+    const {html, shake} = render(t);
+    screen.innerHTML = html;
+    screen.style.transform = shake ? `translate(${(hash(1, 1, t * 60) - 0.5) * 6}px, ${(hash(2, 2, t * 60) - 0.5) * 6}px)` : '';
+    raf = requestAnimationFrame(frame);
+  };
+  raf = requestAnimationFrame(frame);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf); else raf = requestAnimationFrame(frame);
+  });
+  if (typeof module !== 'undefined') module.exports = {render, W, H};
+})();
+</script>
+</body>
+</html>
