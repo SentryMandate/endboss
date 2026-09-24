@@ -1,0 +1,21 @@
+# The deterministic gate. Runs on every PR, on every merge-queue group, and on main.
+# The job name `checks` is what the ruleset on main requires; renaming it unlocks main.
+name: checks
+on:
+  pull_request:
+  merge_group:        # the merge queue re-tests each PR against latest main before merging
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --check dragon.mjs
+      - run: node --test
