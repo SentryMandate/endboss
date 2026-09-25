@@ -18,4 +18,5 @@ jobs:
         with:
           node-version: 24
       - run: node --check dragon.mjs
+      - run: node tools/build.mjs
       - run: node --test
