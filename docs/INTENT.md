@@ -5,12 +5,12 @@ checked against `docs/CONTRACT.md`, and the contract answers to this page.
 
 ## What the customer said
 
-Verbatim, as quoted in the tickets:
+As told to the orchestrator by the customer.
 
-1. "worse than my child could draw" (their verdict on v1; END-1)
-2. "10k ultra HD" (END-1)
-3. "HD out of ASCII" (END-1, decision 3)
-4. "hold space to breathe fire" (END-5)
+1. "looks worse than what his child can draw"
+2. "wants it taken to a 10k ultra HD vibe"
+3. "they want to hold space to fire flames out of its mouth"
+4. "they want it to feel like an HD image but out of ascii art"
 
 ## What we decided
 

@@ -5,8 +5,8 @@ The ticket is the source of truth for each clause's wording. Each clause names w
 None of these tests exist yet; each is written by the ticket the clause belongs to.
 Why we are building this: `docs/INTENT.md`.
 
-A proof is either a test (a file under `test/`), a CI or deploy run (named by its workflow),
-or **customer sign-off in staging**.
+A proof is a test (a file under `test/`), a CI or deploy run (named by its workflow),
+a named review step, or **customer sign-off in staging**.
 
 ## END-2: Build once (src/ bundled into one dist/index.html)
 
