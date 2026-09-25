@@ -6,6 +6,6 @@ A terminal animation: the boss, wings beating, a roar, then fire across the scre
 
 `SPEC.md` is the contract; `node --test` runs the bar.
 
-Open `index.html` in a browser for the page version: continuous wing beat, roar with screen shake, fire and embers, the draining boss bar.
+For the page version, build it with `node tools/build.mjs` and open `dist/index.html` in a browser: continuous wing beat, roar with screen shake, fire and embers, the draining boss bar.
 
 `docs/INTENT.md` is what the customer asked for and what we decided; `docs/CONTRACT.md` is the page's contract, one clause per acceptance criterion in END-2 to END-10.
