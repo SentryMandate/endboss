@@ -14,7 +14,8 @@ export function inlineScript(page) {
 
 /** Frame text at t seconds: load the page at now = 0, then deliver one animation frame at t * 1000 ms. */
 export function frameAt(page, t) {
-  if (!/<pre\b[^>]*\bid="screen"/i.test(page)) throw new Error('the page has no <pre id="screen">');
+  const markup = page.replace(/<script\b[\s\S]*?<\/script\s*>/gi, '');
+  if (!/<pre\b[^>]*\bid="screen"/i.test(markup)) throw new Error('the page has no <pre id="screen">');
   const screen = {innerHTML: '', style: {transform: ''}};
   let pending = null;
   const context = vm.createContext({
