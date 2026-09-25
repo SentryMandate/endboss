@@ -130,9 +130,9 @@ a named review step, or **customer sign-off in staging**.
 
 ## END-10: Retire the terminal version
 
-- **C10.1** `dragon.mjs`, `test/dragon.test.mjs` and `SPEC.md` are gone, and nothing in the repo
-  imports or mentions `dragon.mjs`.
-  Proof: `git grep dragon.mjs` finds nothing, run in the END-10 review.
+- **C10.1** `dragon.mjs`, `test/dragon.test.mjs` and `SPEC.md` are gone, and no file outside `docs/`
+  imports or mentions `dragon.mjs` (`docs/` may name it as history).
+  Proof: `git grep dragon.mjs -- ':!docs/'` finds nothing, run in the END-10 review.
 - **C10.2** CI is green with the remaining tests.
   Proof: the `checks.yml` workflow run.
 - **C10.3** The README's commands, run exactly as written on a fresh clone, work.
